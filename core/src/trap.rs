@@ -17,6 +17,17 @@ pub enum Trap {
     Host(Box<dyn HostError>),
 }
 
+impl PartialEq for Trap {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Code(l0), Self::Code(r0)) => l0 == r0,
+            (Self::Host(l0), Self::Host(r0)) => format!("{:?}", l0) == format!("{:?}", r0),
+            _ => false,
+        }
+    }
+}
+impl Eq for Trap {}
+
 impl Trap {
     /// Wraps the host error in a [`Trap`].
     #[inline]
@@ -81,7 +92,7 @@ impl StdError for Trap {
 /// See [`Trap`] for details.
 ///
 /// [`Trap`]: struct.Trap.html
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum TrapCode {
     /// Wasm code executed `unreachable` opcode.
     ///

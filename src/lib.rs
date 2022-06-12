@@ -138,6 +138,24 @@ pub enum Error {
     Host(Box<dyn HostError>),
 }
 
+impl PartialEq for Error {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Validation(l0), Self::Validation(r0)) => l0 == r0,
+            (Self::Instantiation(l0), Self::Instantiation(r0)) => l0 == r0,
+            (Self::Function(l0), Self::Function(r0)) => l0 == r0,
+            (Self::Table(l0), Self::Table(r0)) => l0 == r0,
+            (Self::Memory(l0), Self::Memory(r0)) => l0 == r0,
+            (Self::Global(l0), Self::Global(r0)) => l0 == r0,
+            (Self::Value(l0), Self::Value(r0)) => l0 == r0,
+            (Self::Trap(l0), Self::Trap(r0)) => l0 == r0,
+            (Self::Host(l0), Self::Host(r0)) => format!("{:?}", l0) == format!("{:?}", r0),
+            _ => false
+        }
+    }
+}
+impl Eq for Error {}
+
 impl Error {
     /// Creates a new host error.
     pub fn host<T>(host_error: T) -> Self
